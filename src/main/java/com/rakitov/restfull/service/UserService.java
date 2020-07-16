@@ -10,7 +10,7 @@ public interface UserService {
     List<User> getAllUser();
     User findUserbyId(Long id);
     User findUserbyEmail(String email);
-    void createUser(User user, String[] roles);
-    void updateUser(User user, String[] roles);
+    void createUser(User user);
+    void updateUser(User user);
     void removeUser(Long id);
 }

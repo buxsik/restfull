@@ -1,5 +1,6 @@
 package com.rakitov.restfull.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -16,6 +17,8 @@ public class Role implements GrantedAuthority {
     @Column(name = "name")
     private String name;
 
+    @Transient
+    @JsonIgnore
     @ManyToMany(mappedBy = "role")
     private List<User> users;
 
@@ -50,12 +53,25 @@ public class Role implements GrantedAuthority {
         this.name= name;
     }
 
+
     public List<User> getUsers() {
         return users;
     }
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    @Override
+    public String toString() {
+        String role = "";
+        if (this.id == 1L) {
+            role = "ADMIN";
+        }
+        if (this.id == 2L) {
+            role = "USER";
+        }
+        return role;
     }
 
     @Override

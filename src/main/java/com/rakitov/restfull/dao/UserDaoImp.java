@@ -1,6 +1,7 @@
 package com.rakitov.restfull.dao;
 
 import com.rakitov.restfull.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ public class UserDaoImp implements UserDao{
 
     final private EntityManager entityManager;
 
+    @Autowired
     public UserDaoImp(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
