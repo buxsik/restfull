@@ -1,6 +1,7 @@
 
 $( document ).ready(function() {
     $(function readAll() {
+
         $.getJSON('/rest', function (data) {
             let html = '<tr>' +
                 '<td scope="col" class="label font-weight-bolder ">Id</td>' +
@@ -88,29 +89,17 @@ $( document ).ready(function() {
                 $('[name = "deleteModal"]').modal('show');
 
             });
-            $('button[name="submitEdit"]').click(function(e) {
+            $('button[name="submitEdit"]').click(function (e) {
                 e.preventDefault();
                 let roleName = $('#roleEdit').val();
                 let roles1 = [];
-                let roleList = function () {
-                    for (let i = 0; i < roleName.length; i++) {
-                        let j = i + 1;
-                        let role = "ROLE_" + roleName[i]
-                        let roles = {
-                            id:j,
-                            name:role}
-
-                        roles1.push(roles)
-                    }
-                    return roles1;
-                }
                 let user = {id: $('input[name="id"]').val(),
                     firstName: $('input[name="firstName"]').val(),
                     lastName: $('input[name="lastName"]').val(),
                     age: $('input[name="age"]').val(),
                     email: $('input[name="email"]').val(),
                     password: $('input[name="password"]').val(),
-                    role: roleList()};
+                    role: getRole(roleName, roles1)};
 
                 $.ajax({
                     type: "PUT",
@@ -119,6 +108,7 @@ $( document ).ready(function() {
                     contentType:"application/json; charset=utf-8",
                     dataType: "json",
                     success: function(){
+                        $("#editForm").trigger('reset');
                         $('[name = "editModal"]').modal('hide')
                         readAll();
                     }
@@ -132,6 +122,7 @@ $( document ).ready(function() {
                     type: "DELETE",
                     url:'/rest/' + id,
                     success: function () {
+                        $("#deleteForm").trigger('reset');
                         $('[name = "deleteModal"]').modal('hide')
                         readAll();
                     }
@@ -145,25 +136,13 @@ $( document ).ready(function() {
             e.preventDefault();
             let roleName = $('#roleAdd').val();
             let roles1 = [];
-            let roleList = function () {
-                for (let i = 0; i < roleName.length; i++) {
-                    let j = i + 1;
-                    let roles = {
-                        id: j,
-                        name: roleName[i]
-                    }
-
-                    roles1.push(roles)
-                }
-                return roles1;
-            }
             let user = {
-                firstName: $('#addForm').find('[name="firstName"]').val(),
-                lastName: $('#addForm').find('[name="lastName"]').val(),
-                age: $('#addForm').find('[name="age"]').val(),
-                email: $('#addForm').find('[name="email"]').val(),
-                password: $('#addForm').find('[name="password"]').val(),
-                role: roleList()};
+                firstName: $('#addForm').find('#firstName').val(),
+                lastName: $('#addForm').find('#lastName').val(),
+                age: $('#addForm').find('#age').val(),
+                email: $('#addForm').find('#email').val(),
+                password: $('#addForm').find('#password').val(),
+                role: getRole(roleName, roles1)};
             $.ajax({
                 type:"POST",
                 url:'/rest',
