@@ -1,7 +1,7 @@
 
 $( document ).ready(function() {
     $(function readAll() {
-
+        console.log(window.curenntUserEmail);
         $.getJSON('/rest', function (data) {
             let html = '<tr>' +
                 '<td scope="col" class="label font-weight-bolder ">Id</td>' +
@@ -22,7 +22,7 @@ $( document ).ready(function() {
                     }
                     return arr;
                 }
-                html = html + '<tr><td>' + user.id + '</td>\n' +
+                html = html + '<tr id="' + user.id +'"><td>' + user.id + '</td>\n' +
                     '        <td id="firstName">' + user.firstName + '</td>\n' +
                     '        <td>' + user.lastName + '</td>\n' +
                     '        <td>' + user.age + '</td>' +
@@ -49,6 +49,17 @@ $( document ).ready(function() {
                         $('[name = "age"]').val(data.age);
                         $('[name = "email"]').val(data.email);
                         $('[name = "password"]').val(data.password);
+                        var roleData = $(getRoleList())
+                        let roleList = "";
+                        for (let i =0; i < roleData.length; i++) {
+                            let name = JSON.stringify(roleData[i].name).replace(/ROLE_/i, "");
+                            roleList = roleList + '<option value="' + roleData[i].id + '">' + name + '</option>';
+                        }
+                        roleList = '<select multiple class="form-control form-control-sm" size="2" id="roleEdit">'
+                            + roleList
+                            + '</select>';
+                        $('select[name="editUser"]').replaceWith($(roleList));
+                        console.log(roleList);
                     }
                 })
                 $('[name = "editModal"]').modal('show');
@@ -89,9 +100,15 @@ $( document ).ready(function() {
                 $('[name = "deleteModal"]').modal('show');
 
             });
+
             $('button[name="submitEdit"]').click(function (e) {
                 e.preventDefault();
-                let roleName = $('#roleEdit').val();
+                let roleId = $('#roleEdit').val();
+                console.log(roleId);
+                var roleName = [];
+                $('#roleAdd option:selected').each(function(i, selected){
+                    roleName[i] = $(selected).text();
+                });
                 let roles1 = [];
                 let user = {id: $('input[name="id"]').val(),
                     firstName: $('input[name="firstName"]').val(),
@@ -99,32 +116,50 @@ $( document ).ready(function() {
                     age: $('input[name="age"]').val(),
                     email: $('input[name="email"]').val(),
                     password: $('input[name="password"]').val(),
-                    role: getRole(roleName, roles1)};
-
+                    role: getRole(roleId, roleName, roles1)};
+                let id = $('[name="id"]').val();
+                let trId = "tr#" + id;
                 $.ajax({
                     type: "PUT",
                     url: '/rest',
                     data: JSON.stringify(user),
                     contentType:"application/json; charset=utf-8",
                     dataType: "json",
-                    success: function(){
+                    success: function(data){
                         $("#editForm").trigger('reset');
-                        $('[name = "editModal"]').modal('hide')
-                        readAll();
+                        let user = data;
+                        let func = function (user1) {
+                            let arr = [];
+                            for (let j = 0; j < user1.role.length; j++) {
+                                arr.push(JSON.stringify(user1.role[j].name).replace(/ROLE_/i, ""));
+                            }
+                            return arr;
+                        }
+                        let html = "";
+                        html = html + '<tr><td>' + user.id + '</td>\n' +
+                            '        <td>' + user.firstName + '</td>\n' +
+                            '        <td>' + user.lastName + '</td>\n' +
+                            '        <td>' + user.age + '</td>' +
+                            '        <td>' + user.email + '</td>' +
+                            '        <td>' + func(user) + '</td>' +
+                            '        <td><button type="button" class="btn btn-info btn-primary label" data-toggle="modal" data-target="#editModal" value="edit" data-id="' + user.id + '">Edit</button></td>' +
+                            '        <td><div th:unless="${#authentication.getName() == ' + user.email + '"><button type="button" class="btn btn-danger btn-primary label" data-toggle="modal" data-target="#deleteModal" value="delete" data-id="' + user.id + '">Delete</button></div></td></tr>';
+                        $(trId).replaceWith(html);
+                        $('[name = "editModal"]').modal('hide');
                     }
                 });
             });
             $('button[name="submitDelete"]').click(function (e) {
                 e.preventDefault();
                 let id = $('[name="id"]').val();
-                console.log(id);
+                let trId = "tr#" + id;
                 $.ajax({
                     type: "DELETE",
                     url:'/rest/' + id,
                     success: function () {
                         $("#deleteForm").trigger('reset');
                         $('[name = "deleteModal"]').modal('hide')
-                        readAll();
+                        $(trId).remove();
                     }
                 })
 
@@ -134,7 +169,11 @@ $( document ).ready(function() {
 
         $('button[name="addUser"]').click(function (e) {
             e.preventDefault();
-            let roleName = $('#roleAdd').val();
+            let roleId = $('#roleAdd').val();
+            var roleName = [];
+            $('#roleAdd option:selected').each(function(i, selected){
+                roleName[i] = $(selected).text();
+            });
             let roles1 = [];
             let user = {
                 firstName: $('#addForm').find('#firstName').val(),
@@ -142,7 +181,7 @@ $( document ).ready(function() {
                 age: $('#addForm').find('#age').val(),
                 email: $('#addForm').find('#email').val(),
                 password: $('#addForm').find('#password').val(),
-                role: getRole(roleName, roles1)};
+                role: getRole(roleId, roleName, roles1)};
             $.ajax({
                 type:"POST",
                 url:'/rest',

@@ -9,6 +9,8 @@
     <link th:href="@{../style/style.css}" rel="stylesheet" />
     <script type="text/javascript" th:src="@{../js/test.js}" src="js/admin.js"></script>
     <script type="text/javascript" th:src="@{../js/edit.js}" src="js/edit.js"></script>
+    <script type="text/javascript" th:src="@{../js/role.js}" src="js/role.js"></script>
+    <script type="text/javascript" th:src="@{../js/add.js}" src="js/add.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-dark bg-dark">
@@ -38,7 +40,7 @@
 
             <ul class="nav nav-tabs mt-3">
                 <li class="active"><a class="nav-link" data-toggle="tab" href="#userTable" onclick="readAll();">User table</a></li>
-                <li><a class="nav-link" data-toggle="tab" href="#addUser">New User</a></li>
+                <li><a class="nav-link" data-toggle="tab" href="#addUser" onclick="getAdd()">New User</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="userTable">
@@ -79,11 +81,9 @@
                                                     <div class="form-group">
                                                         <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Password">
                                                     </div>
-                                                    <label for="role">Roles</label>
+                                                    <label>Roles</label>
                                                     <div class="form-group">
-                                                        <select multiple class="form-control form-control-sm" size="2" id="roleEdit">
-                                                            <option value="ADMIN">ADMIN</option>
-                                                            <option value="ADMIN">USER</option>
+                                                        <select multiple class="form-control form-control-sm" size="2" name="editUser">
                                                         </select>
                                                     </div>
                                                 </div>
@@ -180,11 +180,9 @@
                                 <div class="form-group row">
                                     <input type="password" class="form-control form-control-sm" id="password" placeholder="password">
                                 </div>
-                                <label  class="label" for="role">Roles</label>
+                                <label>Roles</label>
                                 <div class="form-group row">
-                                    <select class="form-control form-control-sm" size="2" id="roleAdd" multiple name="role">
-                                        <option value="ADMIN">ADMIN</option>
-                                        <option value="USER">USER</option>
+                                    <select class="form-control form-control-sm" size="2" multiple name="role" id="roleAdd">
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-success" name="addUser">Add new user</button>

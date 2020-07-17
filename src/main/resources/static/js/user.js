@@ -1,7 +1,6 @@
 $( document ).ready( function () {
     $(function () {
         $.getJSON('/userApi', function (data) {
-
             let html = '<tr >' +
                 '<td class="label font-weight-bolder mb-5 tabUser">About user</td>' +
                 '</tr>' +

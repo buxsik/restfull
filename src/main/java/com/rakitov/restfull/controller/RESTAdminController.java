@@ -45,7 +45,8 @@ public class RESTAdminController {
     public ResponseEntity<User> updateUser(@RequestBody User user) {
 
         userService.updateUser(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        User userNew = userService.findUserbyEmail(user.getEmail());
+        return new ResponseEntity<>(userNew, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
